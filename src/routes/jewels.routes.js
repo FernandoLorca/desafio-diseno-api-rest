@@ -11,6 +11,11 @@ router.get(
   jewelsController.getAllJewels
 );
 router.get(
+  '/jewels/filters',
+  jewelsMiddlewares.reportLayer,
+  jewelsController.getWithFilters
+);
+router.get(
   '/jewels/:id',
   jewelsMiddlewares.reportLayer,
   jewelsMiddlewares.validateId,

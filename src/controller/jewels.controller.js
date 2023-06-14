@@ -1,7 +1,23 @@
 import { jewelsModels } from '../models/jewels.models.js';
 import { handleErrors } from '../database/errors.js';
 
-export const getAllJewels = async (req, res) => {
+const getAllJewels = async (req, res) => {
+  const { limit, sort, page } = req.query;
+
+  try {
+    const response = await jewelsModels.findAll(limit, sort, page);
+    res.status(200).json(response);
+  } catch (error) {
+    console.error(error);
+    const { status, msg } = handleErrors(error.code);
+    return res.status(status).json({
+      ok: false,
+      msg,
+    });
+  }
+};
+
+const getWithFilters = async (req, res) => {
   const { limit, sort, page, filters } = req.query;
 
   try {
@@ -17,7 +33,7 @@ export const getAllJewels = async (req, res) => {
   }
 };
 
-export const getJewel = async (req, res) => {
+const getJewel = async (req, res) => {
   const { id } = req.params;
   try {
     const response = await jewelsModels.findById(id);
@@ -35,7 +51,7 @@ export const getJewel = async (req, res) => {
   }
 };
 
-export const createJewel = async (req, res) => {
+const createJewel = async (req, res) => {
   const { nombre, categoria, metal, precio, stock } = req.body;
   try {
     const response = await jewelsModels.create(
@@ -59,7 +75,7 @@ export const createJewel = async (req, res) => {
   }
 };
 
-export const updateJewel = async (req, res) => {
+const updateJewel = async (req, res) => {
   const { id } = req.params;
   const { nombre, categoria, metal, precio, stock } = req.body;
 
@@ -86,7 +102,7 @@ export const updateJewel = async (req, res) => {
   }
 };
 
-export const deleteJewel = async (req, res) => {
+const deleteJewel = async (req, res) => {
   const { id } = req.params;
 
   try {
@@ -107,6 +123,7 @@ export const deleteJewel = async (req, res) => {
 
 export const jewelsController = {
   getAllJewels,
+  getWithFilters,
   getJewel,
   createJewel,
   updateJewel,

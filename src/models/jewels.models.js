@@ -4,7 +4,36 @@ dotenv.config();
 import { pool } from '../database/connections.js';
 import format from 'pg-format';
 
-const findAll = async (limit = 10, sort, page = 1, filters) => {
+const findAll = async (limit = 10, sort, page = 1) => {
+  let query = 'SELECT * FROM inventario';
+  const values = [];
+
+  if (sort) {
+    const [property] = Object.keys(sort);
+    values.push(property, sort[property]);
+    query += ' ORDER BY %s %s';
+  }
+
+  if (limit) {
+    values.push(limit);
+    query += ' LIMIT %s';
+  }
+
+  if (limit && page) {
+    values.push((page - 1) * limit);
+    query += ' OFFSET %s';
+  }
+
+  try {
+    const formattedQuery = format(query, ...values);
+    const { rows } = await pool.query(formattedQuery);
+    return rows;
+  } catch (error) {
+    throw error;
+  }
+};
+
+const findWithFilter = async (limit = 10, sort, page = 1, filters) => {
   let query = 'SELECT * FROM inventario';
   const values = [];
 
@@ -130,4 +159,11 @@ const remove = async id => {
   }
 };
 
-export const jewelsModels = { findAll, findById, create, update, remove };
+export const jewelsModels = {
+  findAll,
+  findWithFilter,
+  findById,
+  create,
+  update,
+  remove,
+};

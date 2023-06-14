@@ -1,5 +1,30 @@
 import { pool } from '../database/connections.js';
 
+const reportLayer = (req, res, next) => {
+  const methodverification = reqMethod => {
+    if (
+      reqMethod.get === true ||
+      reqMethod.post === true ||
+      reqMethod.put === true ||
+      reqMethod.delete === true
+    )
+      return reqMethod;
+  };
+  const method = methodverification(req.route.methods);
+
+  if (!Object.keys(req.body)[0]) {
+    console.log(`Method used: ${Object.keys(method)}`);
+  } else {
+    console.log(
+      `Method used: ${Object.keys(method)} \nInput entries: ${Object.keys(
+        req.body
+      )}`
+    );
+  }
+
+  next();
+};
+
 const validateInfo = async (req, res, next) => {
   const query = 'SELECT * FROM inventario';
   const response = await pool.query(query);
@@ -50,4 +75,5 @@ export const jewelsMiddlewares = {
   validateId,
   validateBody,
   validateAllData,
+  reportLayer,
 };

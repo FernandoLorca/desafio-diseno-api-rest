@@ -1,3 +1,6 @@
+import * as dotenv from 'dotenv';
+dotenv.config();
+
 import { pool } from '../database/connections.js';
 import format from 'pg-format';
 

@@ -21,7 +21,12 @@ const getWithFilters = async (req, res) => {
   const { limit, sort, page, filters } = req.query;
 
   try {
-    const response = await jewelsModels.findAll(limit, sort, page, filters);
+    const response = await jewelsModels.findWithFilter(
+      limit,
+      sort,
+      page,
+      filters
+    );
     res.status(200).json(response);
   } catch (error) {
     console.error(error);
